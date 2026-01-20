@@ -1,0 +1,137 @@
+#usda 1.0
+(
+    "Exported from Adobe Substance 3D Painter 11.0.3"
+    defaultPrim = "RootNode"
+)
+
+def "RootNode"
+{
+    def Scope "material"
+    {
+        def Material "Material" (
+            customData = {
+                dictionary adobe = {
+                    dictionary painter = {
+                        asset painterProject_spp = @C:/Program Files/Adobe/Adobe Substance 3D Painter/resources/starter_assets/templates/Blender.spt@
+                    }
+                }
+            }
+        )
+        {
+            asset inputs:basecolor_tex = @Blender_textures/Material_2D_View.png@
+            token outputs:adobe:surface.connect = </RootNode/material/Material/AdobeStandardMaterial_4_0/AdobeStandardMaterial_4_0Shader.outputs:surface>
+            token outputs:displacement.connect = </RootNode/material/Material/UsdPreviewSurface/UsdPreviewSurfaceShader.outputs:displacement>
+            token outputs:surface.connect = </RootNode/material/Material/UsdPreviewSurface/UsdPreviewSurfaceShader.outputs:surface>
+
+            def NodeGraph "UsdPreviewSurface"
+            {
+                def Shader "UsdPreviewSurfaceShader"
+                {
+                    uniform token info:id = "UsdPreviewSurface"
+                    float3 inputs:diffuseColor.connect = </RootNode/material/Material/UsdPreviewSurface/diffuseColorTextureShader.outputs:rgb>
+                    float inputs:ior = 1.5
+                    token outputs:displacement
+                    token outputs:surface
+                }
+
+                def Shader "TexCoordReader"
+                {
+                    uniform token info:id = "UsdPrimvarReader_float2"
+                    token inputs:varname = "st"
+                    float2 outputs:result
+                }
+
+                def Shader "diffuseColorTextureShader"
+                {
+                    uniform token info:id = "UsdUVTexture"
+                    asset inputs:file.connect = </RootNode/material/Material.inputs:basecolor_tex>
+                    token inputs:sourceColorSpace = "sRGB"
+                    float2 inputs:st.connect = </RootNode/material/Material/UsdPreviewSurface/TexCoordReader.outputs:result>
+                    token inputs:wrapS = "repeat"
+                    token inputs:wrapT = "repeat"
+                    float3 outputs:rgb
+                }
+            }
+
+            def NodeGraph "AdobeStandardMaterial_4_0"
+            {
+                def Shader "AdobeStandardMaterial_4_0Shader"
+                {
+                    uniform token info:id = "AdobeStandardMaterial_4_0"
+                    float3 inputs:baseColor.connect = </RootNode/material/Material/AdobeStandardMaterial_4_0/baseColorTextureShader.outputs:rgb>
+                    float inputs:IOR = 1.5
+                    token outputs:surface
+                }
+
+                def Shader "TexCoordReader"
+                {
+                    uniform token info:id = "UsdPrimvarReader_float2"
+                    token inputs:varname = "st"
+                    float2 outputs:result
+                }
+
+                def Shader "baseColorTextureShader"
+                {
+                    uniform token info:id = "UsdUVTexture"
+                    asset inputs:file.connect = </RootNode/material/Material.inputs:basecolor_tex>
+                    token inputs:sourceColorSpace = "sRGB"
+                    float2 inputs:st.connect = </RootNode/material/Material/AdobeStandardMaterial_4_0/TexCoordReader.outputs:result>
+                    token inputs:wrapS = "repeat"
+                    token inputs:wrapT = "repeat"
+                    float3 outputs:rgb
+                }
+            }
+        }
+    }
+
+    over "Body"
+    {
+        over "Body" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </RootNode/material/Material>
+        }
+    }
+
+    over "Door_Left"
+    {
+        over "Door_Left" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </RootNode/material/Material>
+        }
+
+        over "Handle"
+        {
+            over "Handle" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </RootNode/material/Material>
+            }
+        }
+    }
+
+    over "Door_Left_001"
+    {
+        over "Door_Left_001" (
+            prepend apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            rel material:binding = </RootNode/material/Material>
+        }
+
+        over "Handle_001"
+        {
+            over "Handle_001" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </RootNode/material/Material>
+            }
+        }
+    }
+}
+
